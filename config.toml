@@ -1,0 +1,19 @@
+[server]
+version = "0.1"
+addr = ":3001"
+development = true
+
+[auth]
+enabled = true
+token = "12345"
+
+[database]
+uri = "mongodb://localhost:27017"
+db = "lotus"
+timeout = 10
+
+[telegram]
+token = ""
+subscriptionToken = "lotus"
+admins = ["doublegrey"]
+level = "debug"
