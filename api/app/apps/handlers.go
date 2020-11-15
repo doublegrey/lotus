@@ -92,5 +92,15 @@ func Update(c *gin.Context) {
 
 // Delete handler deletes app and its logs
 func Delete(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	objectID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		log.Println()
+	}
+	_, err = utils.DB.Collection("apps").DeleteOne(ctx, bson.M{"_id": objectID})
+	if err != nil {
+		log.Println(err)
+	}
+	c.Status(http.StatusOK)
 }
