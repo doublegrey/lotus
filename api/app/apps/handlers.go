@@ -10,6 +10,7 @@ import (
 	"github.com/doublegrey/lotus/utils"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -33,7 +34,20 @@ func GetAll(c *gin.Context) {
 
 // Get handler returns app by id
 func Get(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	var app App
+	objectID, err := primitive.ObjectIDFromHex(c.Param("id"))
+	if err != nil {
+		log.Println()
+	}
+	result := utils.DB.Collection("apps").FindOne(ctx, bson.M{"_id": objectID})
+	err = result.Decode(&app)
+	if err != nil {
+		log.Println(err)
+	}
+	bytes, _ := json.Marshal(app)
+	c.JSON(http.StatusOK, gin.H{"data": string(bytes)})
 }
 
 // Create handler creates app
@@ -41,7 +55,7 @@ func Create(c *gin.Context) {
 	c.Status(http.StatusNotImplemented)
 }
 
-// Update handlers updates app settings
+// Update handlers updates app
 func Update(c *gin.Context) {
 	c.Status(http.StatusNotImplemented)
 }
