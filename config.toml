@@ -1,6 +1,6 @@
 [server]
 version = "0.1"
-addr = ":3001"
+addr = ":8080"
 development = true
 
 [auth]

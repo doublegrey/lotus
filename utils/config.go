@@ -32,7 +32,7 @@ type TomlConfig struct {
 // ParseConfig decodes toml config to Config
 func ParseConfig(p ...string) {
 	path := "./config.toml"
-	if len(path) > 0 {
+	if len(p) > 0 {
 		path = p[0]
 	}
 	if _, err := toml.DecodeFile(path, &Config); err != nil {

@@ -26,7 +26,6 @@ func InitializeDB() {
 	if err != nil {
 		log.Fatal("Failed to initialize client: ", err)
 	}
-
 	err = client.Ping(context.Background(), readpref.Primary())
 	if err != nil {
 		log.Fatal("Failed to connect to the database: ", err)
