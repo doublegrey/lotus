@@ -21,11 +21,11 @@ func GetAll(c *gin.Context) {
 	findOptions.SetSort(bson.D{{Key: "created", Value: -1}})
 	cursor, err := utils.DB.Collection("apps").Find(ctx, bson.M{}, findOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	var apps []App
 	if err = cursor.All(ctx, &apps); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	bytes, _ := json.Marshal(apps)
 	c.JSON(http.StatusOK, gin.H{"data": string(bytes)})
