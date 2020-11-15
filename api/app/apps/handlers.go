@@ -52,7 +52,20 @@ func Get(c *gin.Context) {
 
 // Create handler creates app
 func Create(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	var app App
+	err := c.ShouldBindJSON(&app)
+	if err != nil {
+		log.Println(err)
+	}
+	app.ID = primitive.NewObjectIDFromTimestamp(time.Now().UTC())
+	app.Created = time.Now().UTC()
+	_, err = utils.DB.Collection("apps").InsertOne(ctx, app)
+	if err != nil {
+		log.Println(err)
+	}
+	c.JSON(http.StatusCreated, gin.H{"id": app.ID})
 }
 
 // Update handlers updates app
