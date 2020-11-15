@@ -32,14 +32,15 @@ func Setup() *gin.Engine {
 	serviceGroup.PUT("settings", service.UpdateSettings) // update lotus settings
 	serviceGroup.GET("health", service.Health)           // check lotus health
 
-	appGroup.GET("", apps.GetAll)            // get list of registered apps and their settings
-	appGroup.GET(":id", apps.Get)            // get app settings
-	appGroup.POST("", apps.Create)           // create app
-	appGroup.PUT(":id", apps.Update)         // update app settings
-	appGroup.DELETE(":id", apps.Delete)      // delete app and its logs
-	appGroup.GET(":id/logs", logs.Get)       // get app logs
-	appGroup.POST(":id/logs", logs.Write)    // write message to app logs
-	appGroup.DELETE(":id/logs", logs.Delete) // delete app logs
+	appGroup.GET("", apps.GetAll)                // get list of registered apps and their settings
+	appGroup.GET(":id", apps.Get)                // get app settings
+	appGroup.POST("", apps.Create)               // create app
+	appGroup.PUT(":id", apps.Update)             // update app settings
+	appGroup.DELETE(":id", apps.Delete)          // delete app and its logs
+	appGroup.GET(":id/logs", logs.Get)           // get app logs
+	appGroup.POST(":id/logs", logs.Create)       // create new log record
+	appGroup.DELETE(":id/logs", logs.DeleteAll)  // delete app logs
+	appGroup.DELETE(":id/logs/:id", logs.Delete) // delete app logs
 
 	return r
 }
