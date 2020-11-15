@@ -70,7 +70,24 @@ func Create(c *gin.Context) {
 
 // Update handlers updates app
 func Update(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	var app App
+	err := c.ShouldBindJSON(&app)
+	if err != nil {
+		log.Println(err)
+	}
+	if app.ID == primitive.NilObjectID {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "app id is empty"})
+		return
+	}
+	_, err = utils.DB.Collection("apps").UpdateOne(ctx, bson.M{"_id": app.ID}, bson.M{"$set": app})
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "app id is incorrect"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"id": app.ID})
 }
 
 // Delete handler deletes app and its logs
