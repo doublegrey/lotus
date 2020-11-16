@@ -23,6 +23,9 @@ import (
 func VerifyToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("Authorization")
+		// Ignore "Bearer "
+		split := strings.Split(token, " ")
+		token = split[len(split)-1]
 		appID, err := primitive.ObjectIDFromHex(c.Param("app"))
 		if err != nil {
 			log.Println(err)
@@ -105,16 +108,17 @@ func Create(c *gin.Context) {
 		return
 	}
 
-	var record Record
+	var data map[string]interface{}
 
-	err = json.Unmarshal(body, &record)
+	err = json.Unmarshal(body, &data)
 	if err != nil {
 		log.Println("failed to unmarshal request body")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to unmarshal request body"})
 		return
 	}
-
+	var record Record
 	record.ID = primitive.NewObjectIDFromTimestamp(time.Now().UTC())
+	record.Data = data
 	record.Created = time.Now().UTC()
 
 	if app.Schema != "" {

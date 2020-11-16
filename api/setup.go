@@ -33,16 +33,16 @@ func Setup() *gin.Engine {
 	serviceGroup.PUT("settings", service.UpdateSettings) // update lotus settings
 	serviceGroup.GET("health", service.Health)           // check lotus health
 
-	appGroup.GET("", apps.GetAll)                                     // get list of registered apps
-	appGroup.GET(":id", apps.Get)                                     // get app by id
-	appGroup.POST("", apps.Create)                                    // create app
-	appGroup.PUT(":id", apps.Update)                                  // update app
-	appGroup.DELETE(":id", apps.Delete)                               // delete app and its logs
-	logGroup.GET(":app/logs", logs.VerifyToken(), logs.GetAll)        // get app logs
-	logGroup.GET(":app/logs/:id", logs.VerifyToken(), logs.Get)       // get log record by id
-	logGroup.POST(":app/logs", logs.VerifyToken(), logs.Create)       // create new log record
-	logGroup.DELETE(":app/logs", logs.VerifyToken(), logs.DeleteAll)  // delete app logs
-	logGroup.DELETE(":app/logs/:id", logs.VerifyToken(), logs.Delete) // delete app logs
+	appGroup.GET("", apps.GetAll)                                // get list of registered apps
+	appGroup.GET(":id", apps.Get)                                // get app by id
+	appGroup.POST("", apps.Create)                               // create app
+	appGroup.PUT(":id", apps.Update)                             // update app
+	appGroup.DELETE(":id", apps.Delete)                          // delete app and its logs
+	logGroup.GET(":app", logs.VerifyToken(), logs.GetAll)        // get app logs
+	logGroup.GET(":app/:id", logs.VerifyToken(), logs.Get)       // get log record by id
+	logGroup.POST(":app", logs.VerifyToken(), logs.Create)       // create new log record
+	logGroup.DELETE(":app", logs.VerifyToken(), logs.DeleteAll)  // delete app logs
+	logGroup.DELETE(":app/:id", logs.VerifyToken(), logs.Delete) // delete app logs
 
 	return r
 }
