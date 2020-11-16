@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/doublegrey/lotus/utils"
@@ -13,6 +14,28 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+// Cache map contains all apps
+var Cache sync.Map
+
+// InitCache function initializes apps.Cache map
+func InitCache() {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "created", Value: -1}})
+	cursor, err := utils.DB.Collection("apps").Find(ctx, bson.M{}, findOptions)
+	if err != nil {
+		log.Println(err)
+	}
+	var apps []App
+	if err = cursor.All(ctx, &apps); err != nil {
+		log.Println(err)
+	}
+	for _, app := range apps {
+		Cache.Store(app.ID, app)
+	}
+}
 
 // GetAll handler returns all apps
 func GetAll(c *gin.Context) {
@@ -39,7 +62,7 @@ func Get(c *gin.Context) {
 	var app App
 	objectID, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
-		log.Println()
+		log.Println(err)
 	}
 	result := utils.DB.Collection("apps").FindOne(ctx, bson.M{"_id": objectID})
 	err = result.Decode(&app)
@@ -65,6 +88,7 @@ func Create(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
+	Cache.Store(app.ID, app)
 	c.JSON(http.StatusCreated, gin.H{"id": app.ID})
 }
 
@@ -87,6 +111,7 @@ func Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "app id is incorrect"})
 		return
 	}
+	Cache.Store(app.ID, app)
 	c.JSON(http.StatusOK, gin.H{"id": app.ID})
 }
 
@@ -96,11 +121,12 @@ func Delete(c *gin.Context) {
 	defer cancel()
 	objectID, err := primitive.ObjectIDFromHex(c.Param("id"))
 	if err != nil {
-		log.Println()
+		log.Println(err)
 	}
 	_, err = utils.DB.Collection("apps").DeleteOne(ctx, bson.M{"_id": objectID})
 	if err != nil {
 		log.Println(err)
 	}
+	Cache.Delete(objectID)
 	c.Status(http.StatusOK)
 }
