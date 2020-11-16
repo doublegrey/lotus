@@ -11,6 +11,7 @@ import (
 	"github.com/doublegrey/lotus/utils"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -27,10 +28,14 @@ func Start() {
 		err := result.Decode(&settings)
 		if err != nil {
 			log.Println(err)
+			if err == mongo.ErrNoDocuments {
+				return
+			}
 		}
 		bot, err := tgbotapi.NewBotAPI(settings.Token)
 		if err != nil {
 			log.Println(err)
+			return
 		}
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 60
