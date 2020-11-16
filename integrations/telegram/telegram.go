@@ -14,10 +14,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var (
-	restartChan = make(chan bool)
-)
-
 // Start creates new tg bot instance and listens for new events
 func Start() {
 	for {
@@ -58,8 +54,6 @@ func Start() {
 						}
 					}
 				}
-			case <-restartChan:
-				break
 			case update := <-updates:
 				if update.Message == nil {
 					continue
@@ -68,8 +62,6 @@ func Start() {
 				msg.ReplyToMessageID = update.Message.MessageID
 				bot.Send(msg)
 			}
-
 		}
-
 	}
 }

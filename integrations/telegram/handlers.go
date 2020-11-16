@@ -44,9 +44,3 @@ func GetSettings(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"data": settings})
 }
-
-// RestartBot handler restarts tg bot
-func RestartBot(c *gin.Context) {
-	restartChan <- true
-	c.Status(http.StatusOK)
-}
