@@ -12,21 +12,11 @@ type TomlConfig struct {
 		Addr        string `toml:"addr"`
 		Development bool   `toml:"development"`
 	} `toml:"server"`
-	Auth struct {
-		Enabled bool   `toml:"enabled"`
-		Token   string `toml:"token"`
-	} `toml:"auth"`
 	Database struct {
 		URI     string `toml:"uri"`
 		DB      string `toml:"db"`
 		Timeout int    `toml:"timeout"`
 	} `toml:"database"`
-	Telegram struct {
-		Token             string   `toml:"token"`
-		SubscriptionToken string   `toml:"subscriptionToken"`
-		Admins            []string `toml:"admins"`
-		Level             string   `toml:"level"`
-	} `toml:"telegram"`
 }
 
 // ParseConfig decodes toml config to Config
