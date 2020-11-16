@@ -41,17 +41,17 @@ func Start() {
 			case event := <-logs.Events:
 				for _, user := range settings.Users {
 					for _, app := range user.Apps {
-						if app.ID == event.App {
-							a, exists := apps.Cache.Load(app.ID)
-							if exists {
-								var text = fmt.Sprintf("%s\n=-=-=-=-=-=-=-=\n", a.(apps.App).Name)
-								for key, value := range event.Data {
-									text += fmt.Sprintf("* %s: %v\n", key, value)
-								}
-								msg := tgbotapi.NewMessage(int64(user.Chat), text)
-								bot.Send(msg)
+						// if app.ID == event.App {
+						a, exists := apps.Cache.Load(app.ID)
+						if exists {
+							var text = fmt.Sprintf("%s\n=-=-=-=-=-=-=-=\n", a.(apps.App).Name)
+							for key, value := range event.Data {
+								text += fmt.Sprintf("* %s: %v\n", key, value)
 							}
+							msg := tgbotapi.NewMessage(int64(user.Chat), text)
+							bot.Send(msg)
 						}
+						// }
 					}
 				}
 			case update := <-updates:
