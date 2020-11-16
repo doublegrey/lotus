@@ -9,5 +9,5 @@ import (
 type Record struct {
 	ID      primitive.ObjectID     `bson:"_id" json:"id,omitempty"`
 	Data    map[string]interface{} `json:"data" binding:"required"`
-	Created time.Time              `json:"created,omitempty"`
+	Created time.Time              `json:"created"`
 }
