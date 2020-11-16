@@ -3,7 +3,7 @@ package telegram
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Settings struct {
-	Name  string `json:"name" binding:"required"`
+	Name  string `json:"name"`
 	Token string `json:"token" binding:"required"`
 	Users []User `json:"users"`
 }

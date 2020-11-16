@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/doublegrey/lotus/api/app/apps"
 	"github.com/doublegrey/lotus/api/app/logs"
 	"github.com/doublegrey/lotus/utils"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -29,7 +30,7 @@ func Start() {
 		}
 		bot, err := tgbotapi.NewBotAPI(settings.Token)
 		if err != nil {
-			log.Panic(err)
+			log.Println(err)
 		}
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 60
@@ -40,16 +41,18 @@ func Start() {
 				for _, user := range settings.Users {
 					for _, app := range user.Apps {
 						if app.ID == event.App {
-							var text string
-							for key, value := range event.Data {
-								text += fmt.Sprintf("* %s: %v\n", key, value)
+							a, exists := apps.Cache.Load(app.ID)
+							if exists {
+								var text = fmt.Sprintf("%s\n=-=-=-=-=-=-=-=\n", a.(apps.App).Name)
+								for key, value := range event.Data {
+									text += fmt.Sprintf("* %s: %v\n", key, value)
+								}
+								msg := tgbotapi.NewMessage(int64(user.Chat), text)
+								bot.Send(msg)
 							}
-							msg := tgbotapi.NewMessage(int64(user.Chat), text)
-							bot.Send(msg)
 						}
 					}
 				}
-				log.Println(event.App)
 			case <-restartChan:
 				break
 			case update := <-updates:

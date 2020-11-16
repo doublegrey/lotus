@@ -11,7 +11,7 @@ func main() {
 	utils.ParseConfig()
 	utils.InitializeDB()
 	apps.InitCache()
-	telegram.Start()
+	go telegram.Start()
 	router := api.Setup()
 	router.Run(utils.Config.Server.Addr)
 }
