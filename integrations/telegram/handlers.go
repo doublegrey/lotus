@@ -4,15 +4,13 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/doublegrey/lotus/utils"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-var Users sync.Map
 
 // UpdateSettings handler updates telegram settings
 func UpdateSettings(c *gin.Context) {
@@ -25,14 +23,11 @@ func UpdateSettings(c *gin.Context) {
 	}
 	settings.Name = "telegram"
 
-	_, err = utils.DB.Collection("integrations").UpdateOne(ctx, bson.M{"name": "telegram"}, bson.M{"$set": settings})
+	_, err = utils.DB.Collection("integrations").UpdateOne(ctx, bson.M{"name": "telegram"}, bson.M{"$set": settings}, options.Update().SetUpsert(true))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "app id is incorrect"})
 		return
-	}
-	for _, user := range settings.Users {
-		Users.Store(user.Username, user)
 	}
 	c.Status(http.StatusOK)
 }
@@ -48,4 +43,10 @@ func GetSettings(c *gin.Context) {
 		log.Println(err)
 	}
 	c.JSON(http.StatusOK, gin.H{"data": settings})
+}
+
+// RestartBot handler restarts tg bot
+func RestartBot(c *gin.Context) {
+	restartChan <- true
+	c.Status(http.StatusOK)
 }

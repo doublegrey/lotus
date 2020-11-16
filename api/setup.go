@@ -6,6 +6,7 @@ import (
 	"github.com/doublegrey/lotus/api/app/apps"
 	"github.com/doublegrey/lotus/api/app/logs"
 	"github.com/doublegrey/lotus/api/service"
+	"github.com/doublegrey/lotus/integrations/telegram"
 	"github.com/doublegrey/lotus/middlewares/logger"
 	"github.com/doublegrey/lotus/utils"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ func Setup() *gin.Engine {
 	serviceGroup := apiGroup.Group("service")
 	appGroup := apiGroup.Group("app")
 	logGroup := apiGroup.Group("logs")
+	telegramGroup := apiGroup.Group("telegram")
 
 	serviceGroup.GET("settings", service.GetSettings)    // get lotus settings
 	serviceGroup.PUT("settings", service.UpdateSettings) // update lotus settings
@@ -43,6 +45,9 @@ func Setup() *gin.Engine {
 	logGroup.POST(":app", logs.VerifyToken(), logs.Create)       // create new log record
 	logGroup.DELETE(":app", logs.VerifyToken(), logs.DeleteAll)  // delete app logs
 	logGroup.DELETE(":app/:id", logs.VerifyToken(), logs.Delete) // delete app logs
+
+	telegramGroup.GET("", telegram.GetSettings)
+	telegramGroup.PUT("", telegram.UpdateSettings)
 
 	return r
 }

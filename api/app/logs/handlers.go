@@ -19,6 +19,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Events channel for integrations
+var Events = make(chan Event)
+
 // VerifyToken middleware
 func VerifyToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -143,6 +146,7 @@ func Create(c *gin.Context) {
 	if err != nil {
 		log.Println("failed to insert record in database")
 	}
+	Events <- Event{App: app.ID, Created: record.Created, Data: record.Data}
 	c.JSON(http.StatusCreated, gin.H{"id": record.ID})
 
 }
