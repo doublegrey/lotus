@@ -2,7 +2,6 @@ package apps
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 	"sync"
@@ -51,8 +50,7 @@ func GetAll(c *gin.Context) {
 	if err = cursor.All(ctx, &apps); err != nil {
 		log.Println(err)
 	}
-	bytes, _ := json.Marshal(apps)
-	c.JSON(http.StatusOK, gin.H{"data": string(bytes)})
+	c.JSON(http.StatusOK, gin.H{"data": apps})
 }
 
 // Get handler returns app by id
@@ -69,8 +67,7 @@ func Get(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	bytes, _ := json.Marshal(app)
-	c.JSON(http.StatusOK, gin.H{"data": string(bytes)})
+	c.JSON(http.StatusOK, gin.H{"data": app})
 }
 
 // Create handler creates app

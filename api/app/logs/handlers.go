@@ -59,12 +59,11 @@ func GetAll(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	var records []map[string]interface{}
+	var records []Record
 	if err = cursor.All(ctx, &records); err != nil {
 		log.Println(err)
 	}
-	bytes, _ := json.Marshal(records)
-	c.JSON(http.StatusOK, gin.H{"data": string(bytes)})
+	c.JSON(http.StatusOK, gin.H{"data": records})
 }
 
 // Get handler returns log record by id
@@ -82,13 +81,12 @@ func Get(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	result := utils.DB.Collection(app.Name).FindOne(ctx, bson.M{"_id": recordID})
-	var record map[string]interface{}
+	var record Record
 	err = result.Decode(&record)
 	if err != nil {
 		log.Println(err)
 	}
-	bytes, _ := json.Marshal(record)
-	c.JSON(http.StatusOK, gin.H{"data": string(bytes)})
+	c.JSON(http.StatusOK, gin.H{"data": record})
 }
 
 // Create handler creates new log record
